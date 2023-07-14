@@ -1,0 +1,21 @@
+{
+  "background_color": "#80058d",
+  "description": "",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "kazarosa",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "kazarosa",
+  "start_url": "https://kazarosa.com/teste/algorito/app/home",
+  "theme_color": "#e568af",
+  "categories": [],
+  "screenshots": [],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "type": "image/x-icon"
+    }
+  ],
+  "shortcuts": []
+}
