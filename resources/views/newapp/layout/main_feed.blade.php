@@ -16,6 +16,7 @@
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css'>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-solid-straight/css/uicons-solid-straight.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-bold-rounded/css/uicons-bold-rounded.css'>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     {{-- <link rel="stylesheet" href="/css/bootstrap.min.css"> --}}
@@ -39,7 +40,7 @@
     {{-- MOBILE --}}
     <main class="w-[100%] h-[100vh] inline-block" id="mobile-page">
         {{--  --}}
-        <header class="w-[100%] py-[10px] inline-block mt-[-30px] bg-[#A35554] fixed" style="z-index: 1002;">
+        <header class="w-[100%] py-[10px] inline-block mt-[-30px] bg-[#a55858] fixed" style="z-index: 1002;">
             <div class="w-[90%] mx-[5%] inline-block">
                 <div class="w-[60%] float-left inline-block">
                     <a href="{{ route('app.principal') }}"><img class="w-[150px] mt-[15px]" src="/img/Ativo 12.png" alt="Kaza Rosa"></a>
@@ -47,16 +48,16 @@
                 <div class="w-[40%] float-left inline-block">
                     {{--  --}}
                     <div class="w-[100%] mt-[8px] inline-block">
-                        <div class="w-[25.3%] mx-[1.5%] inline-block float-left">
+                        {{-- <div class="w-[25.3%] mx-[1.5%] inline-block float-left">
                             <p class="text-center text-[#212121] text-[20px] mt-[16px]"><i class="fi fi-bs-search"></i></p>
-                        </div>
+                        </div> --}}
                         {{--  --}}
-                        <div class="w-[25.3%] mx-[1.5%] inline-block float-left">
+                        {{-- <div class="w-[25.3%] mx-[1.5%] inline-block float-left">
                             <p class="text-center text-[#212121] text-[22px] mt-[14px]"><i class="fi fi-bs-bells"></i></p>
-                        </div>
+                        </div> --}}
                         {{--  --}}
-                        <div class="w-[40.3%] mx-[1.5%] inline-block float-left">
-                            <div class="w-[45px] h-[45px] mt-[5px] rounded-[100px] border-[1px] float-right" style="background: url(/img/usuario/{{ $user->imagem }}); background-size: 100%;" title="{{ $user->nome }}"></div>
+                        <div class="w-[100%] mx-[1.5%] inline-block float-left">
+                            <a href="{{ route('app.perfil_now', ['id' => $user->nickname]) }}"><div class="w-[45px] h-[45px] mt-[5px] rounded-[100px] border-[1px] float-right" style="background: url('/img/usuario/{{ $user->imagem }}'); background-size: 100%;"></div></a>
                         </div>
                     </div>
                 </div>
@@ -103,8 +104,10 @@
                         </div>
                         {{--  --}}
                         <div class="w-[20%] mx-[2.5%] float-left inline-block">
-                            <p class="text-center text-[30px] text-[#212121]"><i class="fi fi-sr-settings"></i></p>
-                            <p class="text-[10px] text-[#212121] text-center mt-[-2px]">Configurações</p>
+                            <a href="{{ route('app.configuracao') }}">
+                                <p class="text-center text-[30px] text-[#212121]"><i class="fi fi-sr-settings"></i></p>
+                                <p class="text-[10px] text-[#212121] text-center mt-[-2px]">Configurações</p>
+                            </a>
                         </div>
                     </div>
                 </div>

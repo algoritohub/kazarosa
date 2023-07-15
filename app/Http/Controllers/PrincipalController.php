@@ -13,6 +13,9 @@ use App\Models\ContatoCliente;
 use App\Models\Usuario;
 use App\Models\Comentario;
 use App\Models\Curtir;
+use App\Models\Agendamento;
+use App\Models\Plano;
+use App\Models\ConexaoSeguir;
 
 class PrincipalController extends Controller
 {
@@ -65,6 +68,18 @@ class PrincipalController extends Controller
         }
     }
 
+    public function PlanoDetalheApp($id)
+    {
+        $user  = session('usuario');
+        $plano = Plano::where('plano', $id)->first();
+        $valor = number_format($plano->valor,2,",",".");
+
+        $salas_free = explode( ',', $plano->salas_free);
+        $salas_desc = explode( ',', $plano->salas_desconto);
+
+        return view('newapp.detalhe_planos', compact('plano', 'valor', 'salas_free', 'salas_desc', 'user'));
+    }
+
     public function liberar_rede($id)
     {
         $block = Clube::findOrFail($id);
@@ -106,15 +121,17 @@ class PrincipalController extends Controller
 
     public function principalApp()
     {
-        $salas = Sala::where('stts', 'ativo')->orderBy('id', 'ASC')->limit(4)->get();
         $user  = session('usuario');
+        $salas = Sala::where('stts', 'ativo')->orderBy('id', 'ASC')->limit(4)->get();
+        $plano = Clube::where('id_user', $user->id)->first();
 
-        return view('newapp.principal', compact('user', 'salas'));
+        return view('newapp.principal', compact('user', 'salas', 'plano'));
     }
 
     public function CoworkingDetalheApp($id)
     {
         $user  = session('usuario');
+
         $sala  = Sala::findOrFail($id);
         $valor = number_format($sala->turno,2,",",".");
 
@@ -130,37 +147,85 @@ class PrincipalController extends Controller
         return view('newapp.feed', compact('feed', 'usuarias', 'user'));
     }
 
-    public function perfilApp()
+    public function perfilApp($id)
     {
-        $user = session('usuario');
-        return view('newapp.perfil', compact('user'));
+        $user   = session('usuario');
+        $perfil = Usuario::where('nickname', $id)->first();
+        $seguir = ConexaoSeguir::where('usuario', $perfil->id)->where('seguidor', $user->id)->first();
+
+        $posts         = Network::where('usuario', $perfil->id)->get();
+        $numb_post     = count($posts);
+
+        $seguidores    = ConexaoSeguir::where('usuario', $perfil->id)->get();
+        $numb_seguidor = count($seguidores);
+
+        $seguindo      = ConexaoSeguir::where('seguidor', $perfil->id)->get();
+        $numb_seguindo = count($seguindo);
+
+        return view('newapp.perfil', compact('user', 'perfil', 'posts', 'seguir', 'numb_seguidor', 'numb_seguindo', 'numb_post'));
     }
 
     public function agendamentoApp()
     {
-        return view('newapp.agendamentos');
+        $user   = session('usuario');
+        $agenda = Agendamento::where('user', $user->id)->orderBy('dia', 'ASC')->get();
+
+        return view('newapp.agendamentos', compact('user', 'agenda'));
     }
 
-    public function reservaApp()
+    public function reservaApp($id)
     {
-        return view('newapp.reserva');
+        $user    = session('usuario');
+        $reserva = Sala::findOrFail($id);
+
+        return view('newapp.reserva', compact('reserva', 'user'));
     }
 
     public function reservaDetalheApp()
     {
+        $user    = session('usuario');
         $detalhe = "confirmado";
-        return view('newapp.reserva_detalhe', compact('detalhe'));
+
+        return view('newapp.reserva_detalhe', compact('detalhe', 'user'));
     }
 
-    public function reservaStatusApp()
+    public function reservaStatusApp($id, $status)
     {
-        $status = "yellow";
-        return view('newapp.reserva_detalhe', compact('status'));
+        $agenda = Agendamento::findOrFail($id);
+        $user   = session('usuario');
+
+        return view('newapp.reserva_detalhe', compact('status', 'agenda', 'status', 'user'));
     }
 
     public function meuPlanoApp()
     {
-        return view('newapp.plano');
+        $user  = session('usuario');
+        $plano = Clube::where('id_user', $user->id)->first();
+
+        if($plano){
+
+            $clube = Plano::where('plano', $plano->plano)->first();
+            $valor = number_format($clube->valor,2,",",".");
+
+            $salas_desc    = explode( ',', $clube->salas_desconto);
+            $porcent_dias  = 100 * 30 / $plano->dias;
+            $porcent_horas = 100 * $clube->horas / $plano->horas;
+
+            return view('newapp.plano', compact('user', 'plano', 'clube', 'valor', 'porcent_dias', 'porcent_horas', 'salas_desc'));
+        }
+
+        else{
+            return view('newapp.plano', compact('user', 'plano'));
+        }
+    }
+
+    public function PlanoConfirmaApp($id)
+    {
+        $user  = session('usuario');
+        $plano = Plano::where('plano', $id)->first();
+        $valor = number_format($plano->valor,2,",",".");
+
+        return view('newapp.confirma_plano', compact('user', 'plano', 'valor'));
     }
 
     public function pagPostagemApp($id)
@@ -179,11 +244,30 @@ class PrincipalController extends Controller
 
     public function mensagensApp()
     {
-        return view('newapp.caixa_mensagens');
+        $user = session('usuario');
+
+        return view('newapp.caixa_mensagens', compact('user'));
     }
 
     public function mensagensDetalheApp()
     {
-        return view('newapp.mensagem');
+        $user = session('usuario');
+
+        return view('newapp.mensagem', compact('user'));
+    }
+
+    public function AppConfigura()
+    {
+        $user = session('usuario');
+
+        return view('newapp.configuracao', compact('user'));
+    }
+
+    public function TodosEspacos()
+    {
+        $user  = session('usuario');
+        $salas = Sala::where('stts', 'ativo')->orderBy('id', 'ASC')->get();
+
+        return view('newapp.todas_salas', compact('user', 'salas'));
     }
 }

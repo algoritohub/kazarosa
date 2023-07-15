@@ -13,14 +13,27 @@
         </ol>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img class="d-block w-100" src="/img/newapp/imagem1.jpg" alt="First slide">
+                <img class="d-block w-100" src="/img/salas/{{ $reserva->img1 }}" alt="First slide">
             </div>
+
+            @if($reserva->img2 != "nulla")
             <div class="carousel-item">
-                <img class="d-block w-100" src="/img/newapp/imagem2.jpg" alt="Second slide">
+                <img class="d-block w-100" src="/img/salas/{{ $reserva->img2 }}" alt="Second slide">
             </div>
+            @endif
+
+            @if($reserva->img3 != "nulla")
             <div class="carousel-item">
-                <img class="d-block w-100" src="/img/newapp/imagem3.jpg" alt="Third slide">
+                <img class="d-block w-100" src="/img/salas/{{ $reserva->img3 }}" alt="Second slide">
             </div>
+            @endif
+
+            @if($reserva->img4 != "nulla")
+            <div class="carousel-item">
+                <img class="d-block w-100" src="/img/salas/{{ $reserva->img4 }}" alt="Second slide">
+            </div>
+            @endif
+
         </div>
         <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -36,8 +49,12 @@
         <div class="w-[90%] mx-[5%] py-[20px] inline-block">
             {{--  --}}
             <div class="w-[100% pb-[20px] inline-block">
-                <p class="font-bold text-[25px]">Nome da Sala Selecionada</p></p>
-                <p class="text-[15px]">Mínimo 1 hora</p></p>
+                <p class="font-bold text-[25px]">{{ $reserva->nome }}</p></p>
+                @if ($reserva->minimo == 1)
+                <p class="text-[15px]">Mínimo {{ $reserva->minimo }} hora</p></p>
+                @else
+                <p class="text-[15px]">Mínimo {{ $reserva->minimo }} horas</p></p>
+                @endif
             </div>
 
             <div class="w-[100%] inline-block">
@@ -45,8 +62,8 @@
                     @csrf
                     <div class="my-1">
                         <label class="mr-sm-2" for="inlineFormCustomSelect">Tempo</label>
-                        <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
-                            <option selected>Choose...</option>
+                        <select class="custom-select mr-sm-2" name="tempo" id="inlineFormCustomSelect">
+                            <option selected>...</option>
                             <option value="1">1 hora</option>
                             <option value="2">2 horas</option>
                             <option value="3">3 horas</option>
@@ -57,15 +74,15 @@
                     <div class="w-[100%] inline-block">
                         <div class="float-left w-[49%] mr-[1%]">
                             <label for="exampleInputEmail1">Data</label>
-                            <input type="date" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                            <input type="date" class="form-control" name="dia" id="exampleInputEmail1">
                         </div>
                         <div class="float-left w-[49%] ml-[1%]">
                             <label for="exampleInputEmail1">Hora</label>
-                            <input type="time" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                            <input type="time" class="form-control" name="horario" id="exampleInputEmail1">
                         </div>
                     </div>
-                    <input type="hidden" value="" name="sala">
-                    <button class="w-[100%] h-[40px] rounded-[5px] bg-[blue] mt-[20px] text-[#ffffff]">Verificar Reserva</button>
+                    <input type="hidden" value="{{ $reserva->id }}" name="sala">
+                    <button class="w-[100%] h-[40px] rounded-[5px] bg-[#C5908F] mb-[30px] mt-[20px] text-[#ffffff]">Verificar Reserva</button>
                 </form>
             </div>
         </div>

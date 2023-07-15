@@ -9,33 +9,42 @@
 
             @if (isset($status) AND !empty($status))
 
+                @if ($status == "pagamento")
                 {{-- AGUARDANDO --}}
-                <div class="w-[100%] inline-block" style="display: none;">
+                <div class="w-[100%] inline-block">
                     <div class="w-[100%] inline-block">
-                        @if ($status == "yellow")
+                        @if ($status == "pagamento")
                             <center>
                                 <p class="text-[70px] text-[orange]"><i class="fi fi-sr-question-square"></i></p>
                                 <p class="text-[20px] font-bold mt-[-20px] text-[orange]">Aguardando Pagamento!</p>
                                 <p class="text-[14px] mt-[30px]">seu número de agendamento</p>
-                                <p class="text-[50px] font-bold mt-[0px]">000808302</p>
+                                <p class="text-[50px] font-bold mt-[0px]">{{ $agenda->codigo }}</p>
                             </center>
                         @endif
                     </div>
 
                     <div class="card" style="margin: 20px 0px;">
                         <div class="card-header">Detalhes da Reserva</div>
+                        @php
+                            $id_sala = $agenda->sala;
+                            $info_sala = Illuminate\Support\Facades\DB::select("SELECT * FROM salas WHERE id = '$id_sala'");
+                            $preco_final = number_format($agenda->desconto,2,",",".");
+                        @endphp
                         <div class="card-body">
                             <h5 class="text-[20px] font-bold">Espaço Selecionado</h5>
-                            <p class="mt-[30px] leading-[20px]">Espaço agendado para o dia <b>12 de Agosto de 2023</b> às <b>13:00Hs.</b></p>
-                            <p class="mt-[10px] leading-[20px]">O valor da reserva de <b>R$120,00</b>, deverá ser pago no gichê de atendimento.</b></p>
-                            <button class="w-[200px] h-[40px] float-right text-[#ffffff] font-bold bg-[blue] mt-[20px] rounded-[5px]">Ver na lista</button>
+                            <p class="mt-[30px] leading-[20px]">Espaço agendado para o dia <b>{{ $agenda->dia }}</b> às <b>{{ $agenda->horario }}Hs.</b></p>
+                            <p class="mt-[10px] leading-[20px]">O valor da reserva de <b>R${{ $preco_final }}</b>, deverá ser pago no gichê de atendimento.</b></p>
+                            <a href="{{ route('app.agendamento') }}"><button class="w-[100%] h-[40px] float-right text-[#ffffff] font-bold bg-[#C5908F] mt-[20px] rounded-[5px]">Voltar a lista</button></a>
                         </div>
                     </div>
                     <center>
-                        <a href="" class="text-[red] text-[14px]">Cancelar Reserva</a>
+                        <div class="w-[100%] inline-block mt-[30px]">
+                            <a href="{{ route('app.cancela_reserva', ['id' => $agenda->id]) }}" class="text-[red] text-[14px]">Cancelar Reserva</a>
+                        </div>
                     </center>
                 </div>
 
+                @elseif ($status != "pagamento" OR $status != "simulando")
                 {{-- AVALIAR ESPAÇO --}}
                 <div class="w-[100%] inline-block">
                     <div class="w-[100%] inline-block">
@@ -73,38 +82,16 @@
                                 <option value="1">Péssimo</option>
                             </select>
                         </div>
-                        <button class="w-[200px] h-[40px] float-right text-[#ffffff] font-bold bg-[blue] mt-[20px] rounded-[5px]">Avaliar</button>
+                        <button class="w-[200px] h-[40px] float-right text-[#ffffff] font-bold bg-[#C5908F] mt-[20px] rounded-[5px]">Avaliar</button>
                     </form>
                 </div>
+                @endif
 
             @endif
 
             @if (isset($detalhe) AND !empty($detalhe))
-                <div class="w-[100%] inline-block" style="display: none;">
 
-                    <div class="w-[100%] inline-block">
-                        <center>
-                            <p class="text-[70px] text-[green]"><i class="fi fi-sr-comment-alt-check"></i></p>
-                            <p class="text-[20px] font-bold mt-[-20px] text-[green]">Reserva Confirmada!</p>
-                            <p class="text-[14px] mt-[30px]">seu número de agendamento</p>
-                            <p class="text-[50px] font-bold mt-[0px]">000808302</p>
-                        </center>
-                    </div>
-
-                    <div class="card" style="margin: 20px 0px;">
-                        <div class="card-header">Detalhes da Reserva</div>
-                        <div class="card-body">
-                            <h5 class="text-[20px] font-bold">Espaço Selecionado</h5>
-                            <p class="mt-[30px] leading-[20px]">Espaço agendado para o dia <b>12 de Agosto de 2023</b> às <b>13:00Hs.</b></p>
-                            <p class="mt-[10px] leading-[20px]">O valor da reserva de <b>R$120,00</b>, deverá ser pago no gichê de atendimento.</b></p>
-                            <button class="w-[200px] h-[40px] float-right text-[#ffffff] font-bold bg-[blue] mt-[20px] rounded-[5px]">Ver na lista</button>
-                        </div>
-                    </div>
-                    <center>
-                        <a href="" class="text-[red] text-[14px]">Cancelar Reserva</a>
-                    </center>
-                </div>
-
+                @if ($agendamento == "verificar")
                 <div class="w-[100%] inline-block">
                     <div class="w-[100%] inline-block">
                         <center>
@@ -115,12 +102,12 @@
                     </div>
 
                     <div class="w-[100%] mt-[50px] inline-block">
-                        <form action="{{ route('app.detalhe.reserva') }}" method="POST">
+                        <form action="{{ route('app.agendamento_sala') }}" method="POST">
                             @csrf
                             <div class="my-1">
                                 <label class="mr-sm-2" for="inlineFormCustomSelect">Tempo</label>
-                                <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
-                                    <option selected>Choose...</option>
+                                <select class="custom-select mr-sm-2" name="tempo" id="inlineFormCustomSelect">
+                                    <option selected>...</option>
                                     <option value="1">1 hora</option>
                                     <option value="2">2 horas</option>
                                     <option value="3">3 horas</option>
@@ -131,17 +118,55 @@
                             <div class="w-[100%] inline-block">
                                 <div class="float-left w-[49%] mr-[1%]">
                                     <label for="exampleInputEmail1">Data</label>
-                                    <input type="date" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                                    <input type="date" class="form-control" name="dia" id="exampleInputEmail1">
                                 </div>
                                 <div class="float-left w-[49%] ml-[1%]">
                                     <label for="exampleInputEmail1">Hora</label>
-                                    <input type="time" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                                    <input type="time" class="form-control" name="horario" id="exampleInputEmail1">
                                 </div>
                             </div>
-                            <button class="w-[100%] h-[40px] rounded-[5px] bg-[blue] mt-[20px] text-[#ffffff]">Verificar Reserva</button>
+                            <input type="hidden" value="{{ $sala_retorno }}" name="sala">
+                            <button class="w-[100%] h-[40px] rounded-[5px] bg-[#C5908F] mb-[30px] mt-[20px] text-[#ffffff]">Verificar Reserva</button>
                         </form>
                     </div>
                 </div>
+
+                @elseif($agendamento == "disponivel")
+                <div class="w-[100%] inline-block">
+
+                    <div class="w-[100%] inline-block">
+                        <center>
+                            <p class="text-[70px] text-[green]"><i class="fi fi-sr-comment-alt-check"></i></p>
+                            <p class="text-[20px] font-bold mt-[-20px] text-[green]">Reserva Confirmada!</p>
+                            <p class="text-[14px] mt-[30px]">seu número de agendamento</p>
+                            <p class="text-[50px] font-bold mt-[0px]">{{ $codigo_agenda }}</p>
+                        </center>
+                    </div>
+
+                    @php
+                        $reserva_conf = Illuminate\Support\Facades\DB::select("SELECT * FROM agendamentos WHERE codigo = '$codigo_agenda'");
+                        $id_sala      = $reserva_conf[0]->sala;
+                        $info_sala    = Illuminate\Support\Facades\DB::select("SELECT * FROM salas WHERE id = '$id_sala'");
+                        $preco_final  = number_format($discount_value,2,",",".");
+                    @endphp
+
+                    <div class="card" style="margin: 20px 0px;">
+                        <div class="card-header">Detalhes da Reserva</div>
+                        <div class="card-body">
+                            <h5 class="text-[20px] font-bold">{{ $info_sala[0]->nome }}</h5>
+                            <p class="mt-[30px] leading-[20px]">Espaço agendado para o dia <b>{{ $reserva_conf[0]->dia }}</b> às <b>{{ $reserva_conf[0]->horario }}Hs.</b></p>
+                            <p class="mt-[10px] leading-[20px]">O valor da reserva de <b>R${{ $preco_final }}</b>, deverá ser pago no gichê de atendimento.</b></p>
+                        </div>
+                    </div>
+                    <center>
+                        <a href="{{ route('app.confirmar_reserva', ['id' => $reserva_conf[0]->id]) }}"><button class="w-[100%] h-[40px] float-right text-[#ffffff] font-bold bg-[#C5908F] mt-[20px] rounded-[5px]">Confirmar Reserva</button></a>
+                        <div class="w-[100%] inline-block mt-[30px]">
+                            <a href="{{ route('app.cancela_reserva', ['id' => $reserva_conf[0]->id]) }}" class="text-[red] text-[14px]">Cancelar Reserva</a>
+                        </div>
+                    </center>
+                </div>
+                @endif
+
             @endif
 
         </div>

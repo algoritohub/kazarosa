@@ -9,8 +9,8 @@
         <div style="scrollbar-width: none;" class="w-[100%] overflow-scroll inline-block">
             <div class="w-[270%] px-[2%] inline-block">
                 @foreach ($usuarias as $usuaria)
-                <a href="{{ route('app.perfil') }}">
-                    <div title="{{ $usuaria->nome }}" style="background-image: url('/img/usuario/{{ $usuaria->imagem }}'); background-size: cover;" class="w-[7%] mx-[1%] border-[1px] h-[65px] rounded-[100px] inline-block float-left"></div>
+                <a href="{{ route('app.perfil_now', ['id' => $usuaria->nickname]) }}">
+                    <div title="{{ $usuaria->nome }}" style="background-image: url('/img/usuario/{{ $usuaria->imagem }}'); background-size: cover;" class="w-[7%] mx-[1%] h-[65px] rounded-[100px] inline-block float-left"></div>
                 </a>
                 @endforeach
                 <div class="w-[7%] mx-[1%] h-[65px] rounded-[100px] inline-block bg-[#212121] float-left"></div>
@@ -22,7 +22,7 @@
     <div class="w-[90%] mx-[5%]">
 
         <!-- Button trigger modal -->
-        <p id="newpost" class="text-[50px] h-[40px] text-[blue]" data-toggle="modal" data-target="#exampleModal"><i class="fi fi-sr-add"></i></p>
+        <p id="newpost" class="text-[50px] h-[40px] text-[#C5908F]" data-toggle="modal" data-target="#exampleModal"><i class="fi fi-sr-add"></i></p>
 
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -45,7 +45,7 @@
                             <label for="exampleFormControlTextarea1">Example textarea</label>
                             <textarea class="form-control" name="descricao" id="exampleFormControlTextarea1" rows="3"></textarea>
                         </div>
-                        <button class="w-[100%] inline-block mt-[30px] h-[40px] mb-[20px] text-[#ffffff] rounded-[5px] bg-[blue]">Comentar</button>
+                        <button class="w-[100%] inline-block mt-[30px] h-[40px] mb-[20px] text-[#ffffff] rounded-[5px] bg-[#C5908F]">Comentar</button>
                     </form>
                 </div>
             </div>

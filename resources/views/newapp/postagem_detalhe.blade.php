@@ -65,7 +65,7 @@
                         <label for="exampleFormControlTextarea1">Comente a postagem</label>
                         <textarea class="form-control" name="comentario" id="exampleFormControlTextarea1" rows="3"></textarea>
                     </div>
-                    <button class="w-[100%] inline-block h-[40px] mb-[20px] text-[#ffffff] rounded-[5px] bg-[blue]">Comentar</button>
+                    <button class="w-[100%] inline-block h-[40px] mb-[20px] text-[#ffffff] rounded-[5px] bg-[#C5908F]">Comentar</button>
                 </form>
             </div>
 
@@ -86,6 +86,12 @@
 
         </div>
     </div>
+
+    @if ($postagem->usuario == $user->id)
+    <div class="w-[90%] mx-[5%] inline-block mb-[50px]">
+        <a href="{{ route('app.excluir.post', ['id' => $postagem->id]) }}"><p class="float-right text-[15px] text-[red]">Delete Post</p></a>
+    </div>
+    @endif
 </main>
 
 @endsection

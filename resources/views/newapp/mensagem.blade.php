@@ -25,7 +25,7 @@
                         <label for="exampleFormControlTextarea1">Responder Ciclano</label>
                         <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
                     </div>
-                    <button class="w-[100%] inline-block h-[40px] mb-[20px] text-[#ffffff] rounded-[5px] bg-[blue]">Responder</button>
+                    <button class="w-[100%] inline-block h-[40px] mb-[20px] text-[#ffffff] rounded-[5px] bg-[#C5908F]">Responder</button>
                 </form>
             </div>
 

@@ -17,6 +17,10 @@ body{
     margin: 0 auto;
 }
 
+a{
+    text-decoration: none;
+}
+
 #desktop-page{
     display: show;
 }
@@ -35,6 +39,10 @@ body{
 
 /* ESTRUTURA MOBILE */
 @media all and (min-width:2px) and (max-width:742px) {
+
+    a{
+        text-decoration: none;
+    }
 
     #navegate{
         position: fixed;
@@ -97,6 +105,11 @@ body{
 
 /* TABLETS */
 @media all and (min-width:800px) and (max-width:804px) {
+
+    a{
+        text-decoration: none;
+    }
+
     #navegate{
         position: fixed;
         width: 100%;

@@ -96,7 +96,7 @@
                             {{--  --}}
                             <div class="w-[50%] float-left inline-block">
                                 {{--  --}}
-                                <a href="{{ route('cadastro') }}"><p class="text-[13px] text-[#a35554]">Criar uma conta</p></a>
+                                <a href="{{ route('app.cadastro.page') }}"><p class="text-[13px] text-[#a35554]">Criar uma conta</p></a>
                             </div>
                             {{--  --}}
                             <div class="w-[50%] float-left inline-block">

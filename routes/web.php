@@ -379,6 +379,9 @@ Route::post('/teste/algorito/app/cadastro/registrar', [PrincipalController::clas
 // PRINCIPAL APP
 Route::get('/teste/algorito/app/principal', [PrincipalController::class, "principalApp"])->name('app.principal');
 
+// TODAS AS SALAS APP
+Route::get('/teste/algorito/app/todos/espacos', [PrincipalController::class, "TodosEspacos"])->name('app.todos.espacos');
+
 // AGENDAMENTO APP
 Route::get('/teste/algorito/app/agendamento', [PrincipalController::class, "agendamentoApp"])->name('app.agendamento');
 
@@ -388,11 +391,14 @@ Route::get('/teste/algorito/app/reserva/{id}', [PrincipalController::class, "res
 // PLANO APP
 Route::get('/teste/algorito/app/plano', [PrincipalController::class, "meuPlanoApp"])->name('app.meu_plano');
 
+// DETALHE PLANO APP
+Route::get('/teste/algorito/app/plano/{id}', [PrincipalController::class, "PlanoDetalheApp"])->name('app.plano_detalhe');
+
 // DETALHE RESERVA APP
 Route::get('/teste/algorito/app/reserva/detalhe', [PrincipalController::class, "reservaDetalheApp"])->name('app.detalhe.reserva');
 
 // STATUS RESERVA APP
-Route::get('/teste/algorito/app/reserva/status', [PrincipalController::class, "reservaStatusApp"])->name('app.status.reserva');
+Route::get('/teste/algorito/app/reserva/{id}/{status}', [PrincipalController::class, "reservaStatusApp"])->name('app.status.reserva');
 
 // DETALHES ESPAÇOS APP
 Route::get('/teste/algorito/app/coworking/{id}', [PrincipalController::class, "CoworkingDetalheApp"])->name('app.coworking.detalhe');
@@ -401,7 +407,7 @@ Route::get('/teste/algorito/app/coworking/{id}', [PrincipalController::class, "C
 Route::get('/teste/algorito/app/feed', [PrincipalController::class, "feedApp"])->name('app.feed');
 
 // PERFIL APP
-Route::get('/teste/algorito/app/perfil', [PrincipalController::class, "perfilApp"])->name('app.perfil');
+Route::get('/teste/algorito/app/perfil/{id}', [PrincipalController::class, "perfilApp"])->name('app.perfil_now');
 
 // PÁGINA DE POSTAGEM APP
 Route::get('/teste/algorito/app/postagem/{id}', [PrincipalController::class, "pagPostagemApp"])->name('app.pag_postagem');
@@ -411,6 +417,9 @@ Route::get('/teste/algorito/app/mensagens', [PrincipalController::class, "mensag
 
 // CAIXA DE MENSAGEM APP
 Route::get('/teste/algorito/app/mensagens/18', [PrincipalController::class, "mensagensDetalheApp"])->name('app.mensagens.detalhe');
+
+// CAIXA DE MENSAGEM APP
+Route::get('/teste/algorito/app/configura', [PrincipalController::class, "AppConfigura"])->name('app.configuracao');
 
 
 // BACK CADASTRO
@@ -425,3 +434,39 @@ Route::get('/teste/algorito/app/comentar/{id}', [NewAppController::class, "NewCo
 Route::get('/teste/algorito/app/curtir/{id}', [NewAppController::class, "NewCurtirApp"])->name('app.curtir_post');
 
 Route::post('/teste/algorito/app/agendamento', [NewAppController::class, "NewAgendaApp"])->name('app.agendamento_sala');
+
+Route::get('/teste/algorito/app/confirmar/reserva/{id}', [NewAppController::class, "NewConfirmarApp"])->name('app.confirmar_reserva');
+
+Route::get('/teste/algorito/app/cancela/reserva/{id}', [NewAppController::class, "NewCancelaApp"])->name('app.cancela_reserva');
+
+Route::post('/teste/algorito/app/filtrar/reserva', [NewAppController::class, "NewFiltraraApp"])->name('app.filtrar_reserva');
+
+Route::get('/teste/algorito/app/confirma/plano/{id}', [NewAppController::class, "PlanoConfirmaApp"])->name('app.plano_confirma');
+
+Route::get('/teste/algorito/app/cancelar/plano', [NewAppController::class, "CancelarPlano"])->name('app.cancelar_plano');
+
+Route::get('/teste/algorito/app/seguir/user/{id}', [NewAppController::class, "SeguirNewUser"])->name('app.seguir_user');
+
+Route::get('/teste/algorito/app/deixar/seguir/user/{id}', [NewAppController::class, "DeixarSeguirUser"])->name('app.deixar_seguir_user');
+
+Route::get('/teste/algorito/app/delete/post/{id}', [NewAppController::class, "ExcluirPost"])->name('app.excluir.post');
+
+
+
+Route::get('/teste/algorito/app/alterar/email', [NewAppController::class, "AlterarEmail"])->name('app.alterar.email');
+
+Route::get('/teste/algorito/app/alterar/senha', [NewAppController::class, "AlterarSenha"])->name('app.alterar.senha');
+
+Route::get('/teste/algorito/app/alterar/imagem', [NewAppController::class, "AlterarImagem"])->name('app.alterar.imagem');
+
+Route::get('/teste/algorito/app/alterar/nome_perfil', [NewAppController::class, "AlterarNomePerfil"])->name('app.alterar.nome_perfil');
+
+Route::get('/teste/algorito/app/alterar/nome_usuario', [NewAppController::class, "AlterarNomeUsuario"])->name('app.alterar.nome_usuario');
+
+Route::get('/teste/algorito/app/adicionar/bio', [NewAppController::class, "AddBioApp"])->name('app.adicionar.bio');
+
+Route::get('/teste/algorito/app/alterar/bio', [NewAppController::class, "AlterarBioApp"])->name('app.alterar.bio');
+
+Route::get('/teste/algorito/app/delete/conta', [NewAppController::class, "DeleteContaApp"])->name('app.delete.conta');
+
+Route::get('/teste/algorito/app/logout', [NewAppController::class, "LogoutContaApp"])->name('app.logout.conta');

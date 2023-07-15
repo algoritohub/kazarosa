@@ -16,19 +16,19 @@
                 <img class="d-block w-100" src="/img/salas/{{ $sala->img1 }}" alt="First slide">
             </div>
 
-            @if($sala->img2 != "nulla"))
+            @if($sala->img2 != "nulla")
             <div class="carousel-item">
                 <img class="d-block w-100" src="/img/salas/{{ $sala->img2 }}" alt="Second slide">
             </div>
             @endif
 
-            @if($sala->img3 != "nulla"))
+            @if($sala->img3 != "nulla")
             <div class="carousel-item">
                 <img class="d-block w-100" src="/img/salas/{{ $sala->img3 }}" alt="Second slide">
             </div>
             @endif
 
-            @if($sala->img4 != "nulla"))
+            @if($sala->img4 != "nulla")
             <div class="carousel-item">
                 <img class="d-block w-100" src="/img/salas/{{ $sala->img4 }}" alt="Second slide">
             </div>
@@ -65,11 +65,11 @@
                     <p class="font-bold mt-[10px] text-[18px]">Turno R${{ $valor }}</p>
                 </div>
                 <div class="w-[50%] inline-block float-left">
-                    <a href="{{ route('app.reserva', ['id' => $sala->id]) }}"><button class="w-[90%] float-right h-[50px] bg-[blue] border-[0] text-[#ffffff] font-bold rounded-[5px]">Agendar espaço</button></a>
+                    <a href="{{ route('app.reserva', ['id' => $sala->id]) }}"><button class="w-[90%] float-right h-[50px] bg-[#C5908F] border-[0] text-[#ffffff] font-bold rounded-[5px]">Agendar espaço</button></a>
                 </div>
             </div>
             {{--  --}}
-            <div class="w-[100% pt-[20px] inline-block">
+            <div class="w-[100% pt-[20px] mb-[30px] inline-block">
                 <p class="text-[14px]">{{ $sala->descricao }}</p></p>
             </div>
         </div>

@@ -7,7 +7,20 @@ use App\Models\Usuario;
 use App\Models\Network;
 use App\Models\Curtir;
 use App\Models\Comentario;
+use App\Models\Agendamento;
+use App\Models\Clube;
+use App\Models\Sala;
+use App\Models\Plano;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\EmailPaymentPlanBasic;
+use App\Mail\EmailPaymentPlanVip;
+use app\Mail\EmailPaymentPlanExecutive;
+use App\Mail\EmailAutorizadPlan;
+use App\Mail\EmailPaymentAppPlan;
+use App\Models\ConexaoSeguir;
+use File;
 
 class NewAppController extends Controller
 {
@@ -65,7 +78,7 @@ class NewAppController extends Controller
         $new_cadastro->cidade     = "null";
         $new_cadastro->estado     = "null";
         $new_cadastro->bio        = "null";
-        $new_cadastro->imagem     = "imagem.png";
+        $new_cadastro->imagem     = "usuario.png";
         $new_cadastro->stts       = "ativo";
         $new_cadastro->nickname   = $new_nick;
         $new_cadastro->atuacao    = $request->atuacao;
@@ -76,8 +89,7 @@ class NewAppController extends Controller
 
         $new_cadastro->save();
 
-        dd('cadastrado!');
-        exit();
+        return redirect()->route('app.login');
     }
 
     public function NewLogarApp(Request $request)
@@ -138,8 +150,7 @@ class NewAppController extends Controller
 
         $postagem->save();
 
-        dd('postado');
-        exit();
+        return back();
     }
 
     public function NewComentarioApp(Request $request, $id)
@@ -151,8 +162,7 @@ class NewAppController extends Controller
 
         $comentario->save();
 
-        dd('comentado');
-        exit();
+        return back();
     }
 
     public function NewCurtirApp($id)
@@ -163,25 +173,40 @@ class NewAppController extends Controller
         $curtir->post    = $id;
         $curtir->usuario = $id_user;
 
-        $curtir->save();
+        $verific_curtida = Curtir::where('usuario', $id_user)->where('post', $id)->first();
 
-        session()->flash('alert', 'Você curtiu essa postagem!');
+        if($verific_curtida){
+            session()->flash('alert', 'Você já curtiu essa postagem!');
+        }
+        else{
+            $curtir->save();
+            session()->flash('alert', 'Você curtiu essa postagem!');
+        }
 
-        dd('curtit');
-        exit();
+        $postagem = Network::find($id);
+        $user     = session('usuario');
+
+        $comentar = Comentario::where('postagem', $id)->orderBy('id', 'DESC')->get();
+        $numb_cmt = count($comentar);
+
+        $curtidas = Curtir::where('post', $id)->where('usuario', $user->id)->get();
+        $numb_crt = count($curtidas);
+
+        return view('newapp.postagem_detalhe', compact('postagem', 'user', 'comentar', 'numb_crt', 'numb_cmt'));
     }
 
     // NOVO AGENDAMENTO PELO GUICHÊ
     public function NewAgendaApp(Request $request)
     {
-        $agenda = new Agendamento;
+        $agenda  = new Agendamento;
+        $email   = session('usuario')['email'];
+        $sala    = $request->sala;
+        $tempo   = $request->tempo;
+        $horario = $request->horario;
+        $diat    = $request->dia;
 
-        $id_assoc   = session('usuario')['id'];
-        $email      = $request->email;
-        $sala       = $request->sala;
-        $tempo      = $request->tempo;
-        $horario    = $request->horario;
-        $dia        = $request->dia;
+        $new_data = explode('-', $diat);
+        $dia      = "$new_data[2]/$new_data[1]/$new_data[0]";
 
         // VERIFICAR SE A USUARIAS JÁ EXISTE
         $verificar = Usuario::where('email', $email)->first();
@@ -328,7 +353,10 @@ class NewAppController extends Controller
         $sala    = $request->sala;
         $tempo   = $request->tempo;
         $horario = $request->horario;
-        $dia     = $request->dia;
+        $diat    = $request->dia;
+
+        $new_data = explode('-', $diat);
+        $dia      = "$new_data[2]/$new_data[1]/$new_data[0]";
 
         // INFORMAÇÕES DA SALA
         $verificar_sala = Sala::where('id', $sala)->first();
@@ -344,10 +372,13 @@ class NewAppController extends Controller
 
             else{
 
-                $agendamento = "erro";
-                $mensagem    = "Não aceita o tempo informado!";
+                $status   = "erro";
+                $mensagem = "Não aceita o tempo informado!";
 
-                return view('newapp.app.reserva', ['simulacao' => $agendamento, 'msn' => $mensagem]);
+                // dd('Não aceita o tempo informado!');
+                // exit();
+
+                return view('newapp.app.reserva', compact('status', 'mensagem'));
             }
         }
 
@@ -362,10 +393,15 @@ class NewAppController extends Controller
 
             else{
 
-                $agendamento = "erro";
-                $mensagem    = "Não aceita o tempo de 2 horas!";
+                $status   = "erro";
+                $mensagem = "Não aceita o tempo de 2 horas!";
 
-                return view('newapp.app.reserva', ['simulacao' => $agendamento, 'msn' => $mensagem]);
+                // dd('Não aceita o tempo de 2 horas!');
+                // exit();
+
+                return view('newapp.app.reserva', compact('status', 'mensagem'));
+
+                // return view('newapp.app.reserva', ['simulacao' => $agendamento, 'msn' => $mensagem]);
             }
         }
 
@@ -406,7 +442,11 @@ class NewAppController extends Controller
             $hor_retorno  = $horario;
 
             $detalhe = "confirmado";
-            return view('newapp.reserva_detalhe', compact('detalhe'));
+
+            $user = session('usuario');
+
+            $detalhe = "confirmado";
+            return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'sala_retorno', 'user'));
         }
         else{
 
@@ -445,7 +485,11 @@ class NewAppController extends Controller
                         $hor_retorno  = $horario;
 
                         $detalhe = "confirmado";
-                        return view('newapp.reserva_detalhe', compact('detalhe'));
+
+                        $user = session('usuario');
+
+                        $detalhe = "confirmado";
+                        return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'sala_retorno', 'user'));
                     }
                 }
 
@@ -473,7 +517,11 @@ class NewAppController extends Controller
                         $hor_retorno  = $horario;
 
                         $detalhe = "confirmado";
-                        return view('newapp.reserva_detalhe', compact('detalhe'));
+
+                        $user = session('usuario');
+
+                        $detalhe = "confirmado";
+                        return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'sala_retorno', 'user'));
                     }
                 }
 
@@ -498,7 +546,11 @@ class NewAppController extends Controller
                 $agendamento = "disponivel";
 
                 $detalhe = "confirmado";
-                return view('newapp.reserva_detalhe', compact('detalhe'));
+
+                $user = session('usuario');
+
+                $detalhe = "confirmado";
+                return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'user', 'codigo_agenda', 'discount_value'));
             }
             else{
 
@@ -523,7 +575,11 @@ class NewAppController extends Controller
                 $agendamento = "disponivel";
 
                 $detalhe = "confirmado";
-                return view('newapp.reserva_detalhe', compact('detalhe'));
+
+                $user = session('usuario');
+
+                $detalhe = "confirmado";
+                return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'user', 'codigo_agenda', 'discount_value'));
             }
         }
     }
@@ -534,7 +590,10 @@ class NewAppController extends Controller
         $sala    = $request->sala;
         $tempo   = $request->tempo;
         $horario = $request->horario;
-        $dia     = $request->dia;
+        $diat    = $request->dia;
+
+        $new_data = explode('-', $diat);
+        $dia      = "$new_data[2]/$new_data[1]/$new_data[0]";
 
         //   +----------------------------+
         //  /       DEFINIR VALOR        /
@@ -555,10 +614,13 @@ class NewAppController extends Controller
 
             else{
 
-                $agendamento = "erro";
-                $mensagem    = "Não aceita o tempo informado!";
+                $status   = "erro";
+                $mensagem = "Não aceita o tempo informado!";
 
-                return view('newapp.app.reserva', ['simulacao' => $agendamento, 'msn' => $mensagem]);
+                // dd('Não aceita o tempo informado!');
+                // exit();
+
+                return view('newapp.app.reserva', compact('status', 'mensagem'));
             }
         }
 
@@ -574,10 +636,12 @@ class NewAppController extends Controller
 
             else{
 
-                $agendamento = "erro";
-                $mensagem    = "Não aceita o tempo de 2 horas!";
+                $status   = "erro";
+                $mensagem = "Não aceita o tempo de 2 horas!";
 
-                return view('newapp.app.reserva', ['simulacao' => $agendamento, 'msn' => $mensagem]);
+                // dd('Não aceita o tempo de 2 horas!');
+                // exit();
+                return view('newapp.app.reserva', compact('status', 'mensagem'));
             }
         }
 
@@ -645,9 +709,6 @@ class NewAppController extends Controller
             $discount_value = $define_remaining_value;
         }
 
-        // dd('discount hours', $finish_value, $discount_value);
-        // exit();
-
         //   +----------------------------+
         //  /   VERIFICAR AGENDAMENTO    /
         // +----------------------------+
@@ -662,12 +723,12 @@ class NewAppController extends Controller
             $dia_retorno  = $dia;
             $hor_retorno  = $horario;
 
-            
-            
+            $detalhe = "confirmado";
 
+            $user = session('usuario');
 
             $detalhe = "confirmado";
-            return view('newapp.reserva_detalhe', compact('detalhe'));
+            return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'sala_retorno', 'user'));
         }
         else{
 
@@ -705,12 +766,10 @@ class NewAppController extends Controller
                         $dia_retorno  = $dia;
                         $hor_retorno  = $horario;
 
-                        
-                        
-
+                        $user = session('usuario');
 
                         $detalhe = "confirmado";
-                        return view('newapp.reserva_detalhe', compact('detalhe'));
+                        return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'sala_retorno', 'user'));
                     }
                 }
 
@@ -737,11 +796,10 @@ class NewAppController extends Controller
                         $dia_retorno  = $dia;
                         $hor_retorno  = $horario;
 
-                        
-                        
+                        $user = session('usuario');
 
                         $detalhe = "confirmado";
-                        return view('newapp.reserva_detalhe', compact('detalhe'));
+                        return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'sala_retorno', 'user'));
                     }
                 }
 
@@ -765,10 +823,10 @@ class NewAppController extends Controller
 
                 $agendamento = "disponivel";
 
-                
-                
+                $user = session('usuario');
+
                 $detalhe = "confirmado";
-                return view('newapp.reserva_detalhe', compact('detalhe'));
+                return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'codigo_agenda', 'discount_value', 'user'));
             }
             else{
 
@@ -792,12 +850,10 @@ class NewAppController extends Controller
 
                 $agendamento = "disponivel";
 
-
-
-
+                $user = session('usuario');
 
                 $detalhe = "confirmado";
-                return view('newapp.reserva_detalhe', compact('detalhe'));
+                return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'codigo_agenda', 'discount_value', 'user'));
             }
         }
     }
@@ -808,7 +864,10 @@ class NewAppController extends Controller
         $sala    = $request->sala;
         $tempo   = $request->tempo;
         $horario = $request->horario;
-        $dia     = $request->dia;
+        $diat    = $request->dia;
+
+        $new_data = explode('-', $diat);
+        $dia      = "$new_data[2]/$new_data[1]/$new_data[0]";
 
         // INFORMAÇÕES DA SALA
         $verificar_sala = Sala::where('id', $sala)->first();
@@ -900,11 +959,13 @@ class NewAppController extends Controller
             $dia_retorno  = $dia;
             $hor_retorno  = $horario;
 
-
-
-
             $detalhe = "confirmado";
-            return view('newapp.reserva_detalhe', compact('detalhe'));
+
+            $user = session('usuario');
+
+            // dd('Confirmado!');
+            // exit();
+            return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'sala_retorno', 'user'));
         }
         else{
 
@@ -942,11 +1003,13 @@ class NewAppController extends Controller
                         $dia_retorno  = $dia;
                         $hor_retorno  = $horario;
 
-                        
-                        
-
                         $detalhe = "confirmado";
-                        return view('newapp.reserva_detalhe', compact('detalhe'));
+
+                        $user = session('usuario');
+
+                        // dd('Confirmado!');
+                        // exit();
+                        return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'sala_retorno', 'user'));
                     }
                 }
 
@@ -973,11 +1036,13 @@ class NewAppController extends Controller
                         $dia_retorno  = $dia;
                         $hor_retorno  = $horario;
 
-
-
-
                         $detalhe = "confirmado";
-                        return view('newapp.reserva_detalhe', compact('detalhe'));
+
+                        $user = session('usuario');
+
+                        // dd('Confirmado!');
+                        // exit();
+                        return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'sala_retorno', 'user'));
                     }
                 }
 
@@ -1001,11 +1066,13 @@ class NewAppController extends Controller
 
                 $agendamento = "disponivel";
 
-
-
-
                 $detalhe = "confirmado";
-                return view('newapp.reserva_detalhe', compact('detalhe'));
+
+                $user = session('usuario');
+
+                // dd('Confirmado!');
+                // exit();
+                return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'codigo_agenda', 'discount_value', 'user'));
             }
             else{
 
@@ -1029,11 +1096,358 @@ class NewAppController extends Controller
 
                 $agendamento = "disponivel";
 
-
-
                 $detalhe = "confirmado";
-                return view('newapp.reserva_detalhe', compact('detalhe'));
+
+                $user = session('usuario');
+
+                // dd('Confirmado!');
+                // exit();
+                return view('newapp.reserva_detalhe', compact('detalhe', 'agendamento', 'codigo_agenda', 'discount_value', 'user'));
             }
         }
+    }
+
+    public function NewConfirmarApp($id)
+    {
+        $status = Agendamento::find($id);
+        $status->update([
+            'stts' => 'pagamento',
+        ]);
+
+        return redirect()->route('app.agendamento');
+    }
+
+    public function NewCancelaApp($id)
+    {
+        Agendamento::findOrFail($id)->delete();
+
+        return redirect()->route('app.principal');
+    }
+
+    public function NewFiltraraApp(Request $request)
+    {
+        $diat     = $request->dia;
+        $new_data = explode('-', $diat);
+        $dia      = "$new_data[2]/$new_data[1]/$new_data[0]";
+
+        $user     = session('usuario');
+        $filtro   = Agendamento::where('dia', $dia)->orderBy('dia', 'ASC')->get();
+
+        return view('newapp.agendamentos', compact('user', 'filtro'));
+    }
+
+    // CRIAR PLANO VIA APP
+    public function PlanoConfirmaApp($id)
+    {
+        // localizar usuário pelo e-mail
+        $user_id   = session('usuario')['id'];
+        $user_mail = session('usuario')['email'];
+
+        // CRIA PLANO
+        $plan = new Clube;
+        $plan->id_user = $user_id;
+        $plan->plano   = $id;
+        $plancode      = random_int(100000000, 999999999);
+
+        // PLANO BÁSICO
+        if ($id == 1) {
+            $plan->desconto = 10;
+            $plan->horas    = 12;
+            $plan->turno    = 0;
+
+            $plan->stts     = "pagamento";
+            $plan->inicio   = date('d/m/Y');
+            $plan->dias     = 30;
+            $plan->codigo   = $plancode;
+            $plan->save();
+
+            // ENVIAR EMAIL COM PAGAMENTO (ALTERAR MAIL PARA RECEBER ID)
+            Mail::to($user_mail)->send(new EmailPaymentAppPlan($user_id));
+        }
+
+        if ($id == 2) {
+            $plan->desconto = 10;
+            $plan->horas    = 12;
+            $plan->turno    = 0;
+
+            $plan->stts     = "pagamento";
+            $plan->inicio   = date('d/m/Y');
+            $plan->dias     = 30;
+            $plan->codigo   = $plancode;
+            $plan->save();
+
+            // ENVIAR EMAIL COM PAGAMENTO
+            Mail::to($user_mail)->send(new EmailPaymentAppPlan($user_id));
+        }
+
+        if ($id == 4) {
+            $plan->desconto = 10;
+            $plan->horas    = 16;
+            $plan->turno    = 0;
+
+            $plan->stts     = "pagamento";
+            $plan->inicio   = date('d/m/Y');
+            $plan->dias     = 30;
+            $plan->codigo   = $plancode;
+            $plan->save();
+
+            // ENVIAR EMAIL COM PAGAMENTO
+            Mail::to($user_mail)->send(new EmailPaymentAppPlan($user_id));
+        }
+
+        if ($id == 3) {
+            $plan->desconto = 20;
+            $plan->horas    = 16;
+            $plan->turno    = 0;
+
+            $plan->stts     = "pagamento";
+            $plan->inicio   = date('d/m/Y');
+            $plan->dias     = 30;
+            $plan->codigo   = $plancode;
+            $plan->save();
+
+            // ENVIAR EMAIL COM PAGAMENTO
+            Mail::to($user_mail)->send(new EmailPaymentAppPlan($user_id));
+        }
+
+        $user  = session('usuario');
+        $plano = Plano::where('plano', $id)->first();
+        $valor = number_format($plano->valor,2,",",".");
+
+        return view('newapp.confirma_plano', compact('user', 'plano', 'valor'));
+    }
+
+    public function CancelarPlano(Request $request)
+    {
+        $user  = session('usuario');
+        $plano = Clube::where('id_user', $user->id)->first();
+
+        if(Hash::check($request->senha, $user->senha))
+        {
+            Clube::findOrfail($plano->id)->delete();
+        }
+
+        return redirect()->route('app.principal');
+    }
+
+    public function SeguirNewUser($id)
+    {
+        $user   = session('usuario');
+        $seguir = new ConexaoSeguir;
+
+        $seguir->seguidor = $user->id;
+        $seguir->usuario  = $id;
+        $seguir->stts     = "ativo";
+
+        $seguir->save();
+
+        return back();
+    }
+
+    public function DeixarSeguirUser($id)
+    {
+        ConexaoSeguir::findOrFail($id)->delete();
+
+        return back();
+    }
+
+    public function ExcluirPost($id)
+    {
+        Network::findOrFail($id)->delete();
+
+        return redirect()->route('app.feed');
+    }
+
+    // VERIFICADO
+    public function AlterarEmail(Request $request)
+    {
+        $user  = session('usuario');
+        $email = Usuario::findOrFail($user->id);
+
+        if(Hash::check($request->senha, $user->senha))
+        {
+            $email->update([
+                'email' => $request->email,
+            ]);
+        }
+
+        session()->forget('usuario');
+        return redirect()->route('app.login');
+    }
+
+    // VERIFICADO
+    public function AlterarSenha(Request $request)
+    {
+
+        $user  = session('usuario');
+        $senha = Usuario::findOrFail($user->id);
+
+        if(Hash::check($request->senha, $user->senha))
+        {
+            if($request->senha_nova === $request->conf_senha){
+
+                $senha_cripto = Hash::make($request->senha_nova);
+
+                $senha->update([
+                    'senha' => $senha_cripto,
+                ]);
+            }
+        }
+
+        session()->forget('usuario');
+        return redirect()->route('app.login');
+    }
+
+    // NO OK
+    public function AlterarImagem(Request $request)
+    {
+        $user  = session('usuario');
+        $image = Usuario::findOrFail($user->id);
+
+        if(Hash::check($request->senha, $user->senha))
+        {
+            if ($request->hasFile('imagem') && $request->file('imagem')->isValid()) {
+
+                // File::delete('img/usuario/'.$user->imagem);
+                dd('sou uma imagem');
+                exit();
+
+                $requestImage = $request->imagem;
+                $extension    = $requestImage->extension();
+                $imageName    = md5($requestImage->getClientOriginalName()) . strtotime("now") . "." . $extension;
+                $requestImage->move(public_path('img/usuario'), $imageName);
+
+                $image->update([
+                    'imagem' => $imageName,
+                ]);
+            }
+        }
+
+        return back();
+    }
+
+    public function AlterarNomePerfil(Request $request)
+    {
+        $user = session('usuario');
+        $nome = Usuario::findOrFail($user->id);
+
+        if(Hash::check($request->senha, $user->senha))
+        {
+            $nome->update([
+                'nome' => $request->nome,
+            ]);
+        }
+
+        return back();
+    }
+
+    public function AlterarNomeUsuario(Request $request)
+    {
+        $user = session('usuario');
+        $nick = Usuario::findOrFail($user->id);
+
+        if(Hash::check($request->senha, $user->senha))
+        {
+            $nick->update([
+                'nickname' => $request->nickname,
+            ]);
+        }
+
+        return back();
+    }
+
+    public function AddBioApp(Request $request)
+    {
+        $user = session('usuario');
+        $bio  = Usuario::findOrFail($user->id);
+
+        $bio->update([
+            'bio' => $request->bio,
+        ]);
+
+        return back();
+    }
+
+    public function AlterarBioApp(Request $request)
+    {
+        $user = session('usuario');
+        $bio  = Usuario::findOrFail($user->id);
+
+        if(Hash::check($request->senha, $user->senha))
+        {
+            $bio->update([
+                'bio' => $request->bio,
+            ]);
+        }
+
+        return back();
+    }
+
+    public function DeleteContaApp(Request $request)
+    {
+        $user   = session('usuario');
+
+        $agenda = Agendamento::where('user', $user->id)->get();
+        $clube  = Clube::where('id_user', $user->id)->first();
+        $coment = Comentario::where('usuario', $user->id)->get();
+        $sguind = ConexaoSeguir::where('seguidor', $user->id)->get();
+        $sguidr = ConexaoSeguir::where('usuario', $user->id)->get();
+        $curtds = Curtir::where('usuario', $user->id)->get();
+        $posts  = Network::where('usuario', $user->id)->get();
+        $conta  = Usuario::where('id', $user->id)->first();
+
+        if(Hash::check($request->senha, $user->senha))
+        {
+            if($agenda){
+                foreach($agenda as $agendamento){
+                    Agendamento::findOrFail($agendamento->id)->delete();
+                }
+            }
+
+            if($clube){
+                Clube::findOrFail($clube->id)->delete();
+            }
+
+            if($coment){
+                foreach($coment as $comentarios){
+                    Comentario::findOrFail($comentarios->id)->delete();
+                }
+            }
+
+            if($sguind){
+                foreach($sguind as $seguindo){
+                    ConexaoSeguir::findOrFail($seguindo->id)->delete();
+                }
+            }
+
+            if($sguidr){
+                foreach($sguidr as $seguidores){
+                    ConexaoSeguir::findOrFail($seguidores->id)->delete();
+                }
+            }
+
+            if($curtds){
+                foreach($curtds as $curtidas){
+                    Curtir::findOrFail($curtidas->id)->delete();
+                }
+            }
+
+            if($posts){
+                foreach($posts as $postagens){
+                    Network::findOrFail($postagens->id)->delete();
+                }
+            }
+
+            Usuario::findOrFail($conta->id)->delete();
+        }
+
+        session()->forget('usuario');
+        return redirect()->route('app.login');
+    }
+
+    public function LogoutContaApp()
+    {
+        session()->forget('usuario');
+        return redirect()->route('app.login');
     }
 }

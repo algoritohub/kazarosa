@@ -9,10 +9,10 @@
 
             <div class="w-[100%] mb-[20px] inline-block">
                 <div class="w-[49%] mr-[1%] inline-block float-left">
-                    <button id="btn-recebidas" class="w-[100%] rounded-[5px] h-[40px] bg-[blue] text-[#ffffff]">Recebidas</button>
+                    <button id="btn-recebidas" class="w-[100%] rounded-[5px] h-[40px] bg-[#C5908F] text-[#ffffff]">Recebidas</button>
                 </div>
                 <div class="w-[49%] ml-[1%] inline-block float-left">
-                    <button id="btn-enviadas" class="w-[100%] rounded-[5px] h-[40px] bg-[blue] text-[#ffffff]">Enviadas</button>
+                    <button id="btn-enviadas" class="w-[100%] rounded-[5px] h-[40px] bg-[#C5908F] text-[#ffffff]">Enviadas</button>
                 </div>
             </div>
 
@@ -28,7 +28,7 @@
                                 <p class="mt-[-5px]">Cras justo odio</p>
                             </div>
                             <div class="w-[20%] inline-block float-left">
-                                <button class="w-[100%] h-[40px] rounded-[5px] text-[#ffffff] text-[13px] bg-[blue]">Ver</button>
+                                <button class="w-[100%] h-[40px] rounded-[5px] text-[#ffffff] text-[13px] bg-[#C5908F]">Ver</button>
                             </div>
                         </div>
                     </li>
@@ -43,7 +43,7 @@
                                 <p class="mt-[-5px]">Cras justo odio</p>
                             </div>
                             <div class="w-[20%] inline-block float-left">
-                                <a href="{{ route('app.mensagens.detalhe') }}"><button class="w-[100%] h-[40px] rounded-[5px] text-[#ffffff] text-[13px] bg-[blue]">Ver</button></a>
+                                <a href="{{ route('app.mensagens.detalhe') }}"><button class="w-[100%] h-[40px] rounded-[5px] text-[#ffffff] text-[13px] bg-[#C5908F]">Ver</button></a>
                             </div>
                         </div>
                     </li>
@@ -58,7 +58,7 @@
                                 <p class="mt-[-5px]">Cras justo odio</p>
                             </div>
                             <div class="w-[20%] inline-block float-left">
-                                <button class="w-[100%] h-[40px] rounded-[5px] text-[#ffffff] text-[13px] bg-[blue]">Ver</button>
+                                <button class="w-[100%] h-[40px] rounded-[5px] text-[#ffffff] text-[13px] bg-[#C5908F]">Ver</button>
                             </div>
                         </div>
                     </li>
@@ -77,7 +77,7 @@
                                 <p class="mt-[-5px]">Cras justo odio</p>
                             </div>
                             <div class="w-[20%] inline-block float-left">
-                                <button class="w-[100%] h-[40px] rounded-[5px] text-[#ffffff] text-[13px] bg-[blue]">Ver</button>
+                                <button class="w-[100%] h-[40px] rounded-[5px] text-[#ffffff] text-[13px] bg-[#C5908F]">Ver</button>
                             </div>
                         </div>
                     </li>
@@ -92,7 +92,7 @@
                                 <p class="mt-[-5px]">Cras justo odio</p>
                             </div>
                             <div class="w-[20%] inline-block float-left">
-                                <a href="{{ route('app.mensagens.detalhe') }}"><button class="w-[100%] h-[40px] rounded-[5px] text-[#ffffff] text-[13px] bg-[blue]">Ver</button></a>
+                                <a href="{{ route('app.mensagens.detalhe') }}"><button class="w-[100%] h-[40px] rounded-[5px] text-[#ffffff] text-[13px] bg-[#C5908F]">Ver</button></a>
                             </div>
                         </div>
                     </li>
