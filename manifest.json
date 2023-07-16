@@ -1,9 +1,9 @@
 {
-    "name": "kazarosa",
-    "short_name": "kazarosa",
+    "name": "Kaza Rosa",
+    "short_name": "Kaza Rosa",
     "start_url": "https://kazarosa.com/teste/algorito/app/home",
     "background_color": "#6777ef",
-    "description": "kaza Rosa",
+    "description": "Uma estrutura feminina e funcional, ações de conexão entre mulheres empreendedoras e uma rede digital de negócios exclusiva. O Clube de Negócios Co-Women irá unir o melhor dos dois mundos, disponibilizando ainda um ambiente colaborativo e compartilhando de trabalho.",
     "display": "fullscreen",
     "theme_color": "#6777ef",
     "icons": [
