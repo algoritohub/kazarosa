@@ -19,6 +19,7 @@
     <script src="/js/script.js"></script>
 </head>
 <!-- BODY -->
+
 <body style="background: url(/img/fundo_log.png); background-size: 150%;">
     @yield('content')
 </body>

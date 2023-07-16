@@ -739,27 +739,33 @@
     </div>
 </section>
 <!-- BLOCO DOWNLOAD -->
-<section class="bg-[#f1f1f1]">
+<section class="bg-[#fafafa]">
     <div class="w-[90%] pt-[0px] mx-auto my-[0px]">
         <div id="padding_bloco" class="w-[100%] inline-block">
             <!-- LADO GERAL -->
-            <div class="w-[100%] h-[700px] float-left">
+            <div class="w-[100%] h-[100vh] float-left">
                 <div class="w-[100%] inline-block">
                     <!--  -->
                     <div id="total_wf" class="w-[70%] float-left h-[660px] inline-block">
-                        <div class="w-[100%] h-[560px] inline-block">
+                        <div class="w-[100%] h-[100vh] inline-block">
                             <!--  -->
                             <div id="total_wf" class="w-[50%] mt-[140px] float-left inline-block">
                                 <!--  -->
-                                <div class="mb-[30px] mt-[-30px] font-bold">Disponível para download em breve!</div>
                                 <p class="font-bold mt-[10px] text-[40px] leading-[38px]">Facilidades na palma da mão. </p>
                                 <p class="mt-[30px] text-[16px]">Nós acreditamos que sozinhas somos fortes, sim! Mas juntas, nos tornamos imbatíveis, imparáveis. Iremos ressignificar a forma como muitas mulheres fazem negócios. Com uma visão global e colaborativa, entendemos que a conexão genuína cria laços afetivos, alicerça a confiança e impulsiona os resultados.</p>
-                                <img class="w-[70%] mt-[30px] float-left w-[160px]" src="/img/android.png" alt="">
-                                <img class="w-[70%] mt-[30px] float-left w-[160px]" src="/img/apple.png" alt="">
+                                <div class="mt-[100px] font-bold">Instale a nova versão diretamente em seu dispositivo!</div>
+                                <div class="w-[100%] ml-[-10px] inline-block">
+                                    <div class="w-[50%] float-left inline-block">
+                                        <img class="mt-[30px] float-left w-[90%]" src="/img/android.png" alt="">
+                                    </div>
+                                    <div class="w-[50%] float-left inline-block">
+                                        <img class="mt-[30px] float-left w-[90%]" src="/img/apple.png" alt="">
+                                    </div>
+                                </div>
                             </div>
                             <!--  -->
                             <div id="total_ws" class="w-[50%] float-left inline-block">
-                                <img class="mt-[80px]" src="img/mockup_kaza_rosa_rodape.png" alt="">
+                                <img class="w-[85%] mt-[80px] mx-auto" src="/img/mockup_kaza_rosa_rodape.png" alt="">
                             </div>
                         </div>
                         <!--  -->
@@ -769,14 +775,14 @@
                     </div>
                     <!--  -->
                     <div id="qr" class="w-[30%] float-left h-[700px] px-[30px] inline-block">
-                        <div class="w-[100%] h-[560px] rounded-[20px] p-[40px] mt-[70px] bg-[#ffffff]">
+                        <div class="w-[100%] inline-block border-[1px] rounded-[20px] p-[40px] mt-[70px] bg-[#ffffff]">
                             <!-- <button class="w-[150px] h-[40px] ml-[60px] mt-[110px] z-40 absolute text-[#ffffff] shadow-lg bg-[#333333]">Disponível em breve!</button> -->
-                            <img class="w-[100%]" src="/img/frame.png" alt="">
+                            <img class="w-[100%] border-[1px]" src="/img/frame.png" alt="">
                             <center>
-                                <p class="text-[13px] leading-[14px]">Experimente a vesão web mobile direto do seu celular, e aproveite todos os recusos do App!</p>
-                                <p class="mt-[20px] text-[#c5908f] font-bold text-[18px]">Agendamentos online</p>
-                                <p class="mt-[3px] text-[#c5908f] font-bold text-[18px]">Carteira virtual</p>
-                                <p class="mt-[3px] text-[#c5908f] font-bold text-[18px]">Eventos exclusivos</p>
+                                <p class="text-[13px] mt-[20px] leading-[14px]">Experimente a nova vesão do app direto do seu celular, e aproveite todos os recusos do App!</p>
+                                <p class="mt-[20px] text-[#c5908f] font-bold text-[18px]">Muito mais leve</p>
+                                <p class="mt-[3px] text-[#c5908f] font-bold text-[18px]">Novos Recursos</p>
+                                <p class="mt-[3px] text-[#c5908f] font-bold text-[18px]">Coworking</p>
                                 <p class="mt-[3px] text-[#c5908f] font-bold text-[18px]">Rede social exclusiva</p>
                                 <p class="mt-[20px] text-[10px] leading-[9px]">Aponte a câmera do seu celular e aproveite!</p>
                             </center>

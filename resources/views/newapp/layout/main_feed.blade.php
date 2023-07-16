@@ -73,7 +73,7 @@
             </center>
         </div>
         {{--  --}}
-        <section id="conteudo" class="w-[100%] inline-block" style="display: none;">
+        <section id="conteudo" class="w-[100%] inline-block" style="background: url(/img/fundo_log.png); background-size: 150%; display: none;">
             @yield('content')
         </section>
         {{--  --}}
