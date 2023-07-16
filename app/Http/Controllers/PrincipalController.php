@@ -64,20 +64,26 @@ class PrincipalController extends Controller
             return view('meu_plano');
         }
         else{
-            return redirect()->route('login');
+            return redirect()->route('app.login');
         }
     }
 
     public function PlanoDetalheApp($id)
     {
-        $user  = session('usuario');
-        $plano = Plano::where('plano', $id)->first();
-        $valor = number_format($plano->valor,2,",",".");
+        if(session()->has('usuario')){
 
-        $salas_free = explode( ',', $plano->salas_free);
-        $salas_desc = explode( ',', $plano->salas_desconto);
+            $user  = session('usuario');
+            $plano = Plano::where('plano', $id)->first();
+            $valor = number_format($plano->valor,2,",",".");
 
-        return view('newapp.detalhe_planos', compact('plano', 'valor', 'salas_free', 'salas_desc', 'user'));
+            $salas_free = explode( ',', $plano->salas_free);
+            $salas_desc = explode( ',', $plano->salas_desconto);
+
+            return view('newapp.detalhe_planos', compact('plano', 'valor', 'salas_free', 'salas_desc', 'user'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function liberar_rede($id)
@@ -121,153 +127,243 @@ class PrincipalController extends Controller
 
     public function principalApp()
     {
-        $user  = session('usuario');
-        $salas = Sala::where('stts', 'ativo')->orderBy('id', 'ASC')->limit(4)->get();
-        $plano = Clube::where('id_user', $user->id)->first();
+        if(session()->has('usuario')){
 
-        return view('newapp.principal', compact('user', 'salas', 'plano'));
+            $user  = session('usuario');
+            $salas = Sala::where('stts', 'ativo')->orderBy('id', 'ASC')->limit(4)->get();
+            $plano = Clube::where('id_user', $user->id)->first();
+
+            return view('newapp.principal', compact('user', 'salas', 'plano'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function CoworkingDetalheApp($id)
     {
-        $user  = session('usuario');
+        if(session()->has('usuario')){
 
-        $sala  = Sala::findOrFail($id);
-        $valor = number_format($sala->turno,2,",",".");
+            $user  = session('usuario');
 
-        return view('newapp.detalhe_salas', compact('user', 'sala', 'valor'));
+            $sala  = Sala::findOrFail($id);
+            $valor = number_format($sala->turno,2,",",".");
+
+            return view('newapp.detalhe_salas', compact('user', 'sala', 'valor'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function feedApp()
     {
-        $feed     = Network::orderBy('id', 'DESC')->get();
-        $usuarias = Usuario::orderBy('id', 'DESC')->limit(10)->get();
-        $user     = session('usuario');
+        if(session()->has('usuario')){
 
-        return view('newapp.feed', compact('feed', 'usuarias', 'user'));
+            $feed     = Network::orderBy('id', 'DESC')->get();
+            $usuarias = Usuario::orderBy('id', 'DESC')->limit(10)->get();
+            $user     = session('usuario');
+
+            return view('newapp.feed', compact('feed', 'usuarias', 'user'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function perfilApp($id)
     {
-        $user   = session('usuario');
-        $perfil = Usuario::where('nickname', $id)->first();
-        $seguir = ConexaoSeguir::where('usuario', $perfil->id)->where('seguidor', $user->id)->first();
+        if(session()->has('usuario')){
 
-        $posts         = Network::where('usuario', $perfil->id)->get();
-        $numb_post     = count($posts);
+            $user   = session('usuario');
+            $perfil = Usuario::where('nickname', $id)->first();
+            $seguir = ConexaoSeguir::where('usuario', $perfil->id)->where('seguidor', $user->id)->first();
 
-        $seguidores    = ConexaoSeguir::where('usuario', $perfil->id)->get();
-        $numb_seguidor = count($seguidores);
+            $posts         = Network::where('usuario', $perfil->id)->get();
+            $numb_post     = count($posts);
 
-        $seguindo      = ConexaoSeguir::where('seguidor', $perfil->id)->get();
-        $numb_seguindo = count($seguindo);
+            $seguidores    = ConexaoSeguir::where('usuario', $perfil->id)->get();
+            $numb_seguidor = count($seguidores);
 
-        return view('newapp.perfil', compact('user', 'perfil', 'posts', 'seguir', 'numb_seguidor', 'numb_seguindo', 'numb_post'));
+            $seguindo      = ConexaoSeguir::where('seguidor', $perfil->id)->get();
+            $numb_seguindo = count($seguindo);
+
+            return view('newapp.perfil', compact('user', 'perfil', 'posts', 'seguir', 'numb_seguidor', 'numb_seguindo', 'numb_post'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function agendamentoApp()
     {
-        $user   = session('usuario');
-        $agenda = Agendamento::where('user', $user->id)->orderBy('dia', 'ASC')->get();
+        if(session()->has('usuario')){
 
-        return view('newapp.agendamentos', compact('user', 'agenda'));
+            $user   = session('usuario');
+            $agenda = Agendamento::where('user', $user->id)->orderBy('dia', 'ASC')->get();
+
+            return view('newapp.agendamentos', compact('user', 'agenda'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function reservaApp($id)
     {
-        $user    = session('usuario');
-        $reserva = Sala::findOrFail($id);
+        if(session()->has('usuario')){
 
-        return view('newapp.reserva', compact('reserva', 'user'));
+            $user    = session('usuario');
+            $reserva = Sala::findOrFail($id);
+
+            return view('newapp.reserva', compact('reserva', 'user'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function reservaDetalheApp()
     {
-        $user    = session('usuario');
-        $detalhe = "confirmado";
+        if(session()->has('usuario')){
 
-        return view('newapp.reserva_detalhe', compact('detalhe', 'user'));
+            $user    = session('usuario');
+            $detalhe = "confirmado";
+
+            return view('newapp.reserva_detalhe', compact('detalhe', 'user'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function reservaStatusApp($id, $status)
     {
-        $agenda = Agendamento::findOrFail($id);
-        $user   = session('usuario');
+        if(session()->has('usuario')){
 
-        return view('newapp.reserva_detalhe', compact('status', 'agenda', 'status', 'user'));
+            $agenda = Agendamento::findOrFail($id);
+            $user   = session('usuario');
+
+            return view('newapp.reserva_detalhe', compact('status', 'agenda', 'status', 'user'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function meuPlanoApp()
     {
-        $user  = session('usuario');
-        $plano = Clube::where('id_user', $user->id)->first();
+        if(session()->has('usuario')){
 
-        if($plano){
+            $user  = session('usuario');
+            $plano = Clube::where('id_user', $user->id)->first();
 
-            $clube = Plano::where('plano', $plano->plano)->first();
-            $valor = number_format($clube->valor,2,",",".");
+            if($plano){
 
-            $salas_desc    = explode( ',', $clube->salas_desconto);
-            $porcent_dias  = 100 * 30 / $plano->dias;
-            $porcent_horas = 100 * $clube->horas / $plano->horas;
+                $clube = Plano::where('plano', $plano->plano)->first();
+                $valor = number_format($clube->valor,2,",",".");
 
-            return view('newapp.plano', compact('user', 'plano', 'clube', 'valor', 'porcent_dias', 'porcent_horas', 'salas_desc'));
+                $salas_desc    = explode( ',', $clube->salas_desconto);
+                $porcent_dias  = 100 * 30 / $plano->dias;
+                $porcent_horas = 100 * $clube->horas / $plano->horas;
+
+                return view('newapp.plano', compact('user', 'plano', 'clube', 'valor', 'porcent_dias', 'porcent_horas', 'salas_desc'));
+            }
+
+            else{
+                return view('newapp.plano', compact('user', 'plano'));
+            }
         }
-
         else{
-            return view('newapp.plano', compact('user', 'plano'));
+            return redirect()->route('app.login');
         }
     }
 
     public function PlanoConfirmaApp($id)
     {
-        $user  = session('usuario');
-        $plano = Plano::where('plano', $id)->first();
-        $valor = number_format($plano->valor,2,",",".");
+        if(session()->has('usuario')){
 
-        return view('newapp.confirma_plano', compact('user', 'plano', 'valor'));
+            $user  = session('usuario');
+            $plano = Plano::where('plano', $id)->first();
+            $valor = number_format($plano->valor,2,",",".");
+
+            return view('newapp.confirma_plano', compact('user', 'plano', 'valor'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function pagPostagemApp($id)
     {
-        $postagem = Network::find($id);
-        $user     = session('usuario');
+        if(session()->has('usuario')){
 
-        $comentar = Comentario::where('postagem', $id)->orderBy('id', 'DESC')->get();
-        $numb_cmt = count($comentar);
+            $postagem = Network::find($id);
+            $user     = session('usuario');
 
-        $curtidas = Curtir::where('post', $id)->where('usuario', $user->id)->get();
-        $numb_crt = count($curtidas);
+            $comentar = Comentario::where('postagem', $id)->orderBy('id', 'DESC')->get();
+            $numb_cmt = count($comentar);
 
-        return view('newapp.postagem_detalhe', compact('postagem', 'user', 'comentar', 'numb_crt', 'numb_cmt'));
+            $curtidas = Curtir::where('post', $id)->where('usuario', $user->id)->get();
+            $numb_crt = count($curtidas);
+
+            return view('newapp.postagem_detalhe', compact('postagem', 'user', 'comentar', 'numb_crt', 'numb_cmt'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function mensagensApp()
     {
-        $user = session('usuario');
+        if(session()->has('usuario')){
 
-        return view('newapp.caixa_mensagens', compact('user'));
+            $user = session('usuario');
+
+            return view('newapp.caixa_mensagens', compact('user'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function mensagensDetalheApp()
     {
-        $user = session('usuario');
+        if(session()->has('usuario')){
 
-        return view('newapp.mensagem', compact('user'));
+            $user = session('usuario');
+
+            return view('newapp.mensagem', compact('user'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function AppConfigura()
     {
-        $user = session('usuario');
+        if(session()->has('usuario')){
 
-        return view('newapp.configuracao', compact('user'));
+            $user = session('usuario');
+
+            return view('newapp.configuracao', compact('user'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 
     public function TodosEspacos()
     {
-        $user  = session('usuario');
-        $salas = Sala::where('stts', 'ativo')->orderBy('id', 'ASC')->get();
+        if(session()->has('usuario')){
 
-        return view('newapp.todas_salas', compact('user', 'salas'));
+            $user  = session('usuario');
+            $salas = Sala::where('stts', 'ativo')->orderBy('id', 'ASC')->get();
+
+            return view('newapp.todas_salas', compact('user', 'salas'));
+        }
+        else{
+            return redirect()->route('app.login');
+        }
     }
 }

@@ -2,10 +2,10 @@
 @section('title', 'Kaza Rosa | Cadastro')
 
 @section('content')
-<main class="my-[90px]">
+<main class="my-[60px]">
 
     {{-- usuarios top 10 --}}
-    <div class="w-[100%] inline-block mb-[20px]">
+    <div style="display: none;" class="w-[100%] inline-block mb-[20px]">
         <div style="scrollbar-width: none;" class="w-[100%] overflow-scroll inline-block">
             <div class="w-[270%] px-[2%] inline-block">
                 @foreach ($usuarias as $usuaria)
@@ -72,7 +72,19 @@
                     $info_cmnt = Illuminate\Support\Facades\DB::select("SELECT * FROM comentarios WHERE postagem = '$id_post'");
                     $count_cmt = count($info_cmnt);
                 @endphp
-                <h5 class="font-bold">{{ $info_user[0]->nome }}</h5>
+                <div class="w-[100%] inline-block">
+
+                    <div class="w-[10%] inline-block float-left">
+                        <a href="{{ route('app.perfil_now', ['id' => $info_user[0]->nickname]) }}">
+                        <div style="background-image: url('/img/usuario/{{ $info_user[0]->imagem }}'); background-size: cover;" class="w-[30px] h-[30px] bg-[#212121] rounded-[100%] border-[1px]"></div>
+                        </a>
+                    </div>
+                    <div class="w-[90%] inline-block float-left">
+                        <a href="{{ route('app.perfil_now', ['id' => $info_user[0]->nickname]) }}">
+                        <h5 class="font-bold mt-[6px]">{{ $info_user[0]->nome }}</h5>
+                        </a>
+                    </div>
+                </div>
                 <p class="mt-[10px] leading-[20px]">{{ $public->descricao }}</p>
                 <div class="w-[100%] mt-[20px] inline-block">
                     <div class="w-[20%] float-left inline-block">
